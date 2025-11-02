@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.7">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!doctype html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="utf-8" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;BitCrusher Demo&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#0d0d0d; color:#fff; display:flex; min-height:100vh; align-items:center; justify-content:center; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.card { background:#161616; padding:24px; border-radius:16px; width:min(640px, 92vw); box-shadow:0 10px 30px rgba(0,0,0,.4); }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>h1 { margin:0 0 8px; font-size:22px; color:#00ffff; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>p { margin:0 0 16px; opacity:.85 }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.row { display:flex; gap:12px; align-items:center; margin:10px 0; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>input[type="range"] { width:100%; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>button { background:#00ffff; color:#000; border:0; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>small { opacity:.7 }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.footer { margin-top:12px; display:flex; justify-content:space-between; align-items:center; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h1&gt;BitCrusher – AudioWorklet&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;p&gt;Click &lt;b&gt;Start&lt;/b&gt; and move the sliders to hear real-time DSP in your browser.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="row"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button id="start"&gt;Start&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;small&gt;(Browsers require a user gesture to start audio)&lt;/small&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="row"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;label for="bits" style="min-width:120px;"&gt;Bit Depth: &lt;span id="bitsVal"&gt;8&lt;/span&gt;&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input id="bits" type="range" min="2" max="16" value="8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="row"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;label for="freq" style="min-width:120px;"&gt;Freq Reduce: &lt;span id="freqVal"&gt;8&lt;/span&gt;&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input id="freq" type="range" min="1" max="64" value="8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="footer"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;small&gt;Signal: Source → &lt;i&gt;BitCrusherProcessor&lt;/i&gt; → Destination&lt;/small&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;small&gt;Control: UI → &lt;i&gt;AudioParams&lt;/i&gt; → DSP&lt;/small&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script type="module" src="./main.js"&gt;&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
