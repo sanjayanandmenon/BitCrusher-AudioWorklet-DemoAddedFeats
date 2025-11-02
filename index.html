@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BitCrusher Demo</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: #0d0d0d;
+      color: #fff;
+      display: flex;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+    }
+    .card {
+      background: #161616;
+      padding: 24px;
+      border-radius: 16px;
+      width: min(640px, 92vw);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      color: #00ffff;
+    }
+    p {
+      margin: 0 0 16px;
+      opacity: 0.85;
+    }
+    .row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin: 10px 0;
+    }
+    input[type="range"] {
+      width: 100%;
+    }
+    button {
+      background: #00ffff;
+      color: #000;
+      border: 0;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    small {
+      opacity: 0.7;
+    }
+    .footer {
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>BitCrusher – AudioWorklet</h1>
+    <p>Click <b>Start</b> and move the sliders to hear real-time DSP in your browser.</p>
+
+    <div class="row">
+      <button id="start">Start</button>
+      <small>(Browsers require a user gesture to start audio)</small>
+    </div>
+
+    <div class="row">
+      <label for="bits" style="min-width:120px;">
+        Bit Depth: <span id="bitsVal">8</span>
+      </label>
+      <input id="bits" type="range" min="2" max="16" value="8" />
+    </div>
+
+    <div class="row">
+      <label for="freq" style="min-width:120px;">
+        Freq Reduce: <span id="freqVal">8</span>
+      </label>
+      <input id="freq" type="range" min="1" max="64" value="8" />
+    </div>
+
+    <div class="footer">
+      <small>Signal: Source → <i>BitCrusherProcessor</i> → Destination</small>
+      <small>Control: UI → <i>AudioParams</i> → DSP</small>
+    </div>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
