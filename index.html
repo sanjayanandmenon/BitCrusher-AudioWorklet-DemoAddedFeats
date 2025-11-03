@@ -1,12 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <title>BitCrusher with AudioWorklet</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BitCrusher Demo w/ Record, Tone Select and File Select</title>
+    <style>
     <link rel="stylesheet" href="main.css">
     <style>
       /* Added styles for the new layout */
-      .source-group, .controller-group {
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#0d0d0d; color:#fff; display:flex; min-height:100vh; align-items:center; justify-content:center; margin:0; }
+    .card { background:#161616; padding:24px; border-radius:16px; width:min(640px, 92vw); box-shadow:0 10px 30px rgba(0,0,0,.4); }
+    h1 { margin:0 0 8px; font-size:22px; color:#00ffff; }
+    h2 { margin:0 0 6px; font-size:20px; color:#00ffef; }
+    p { margin:0 0 16px; opacity:.85 }
+    .row { display:flex; gap:12px; align-items:center; margin:10px 0; }
+    input[type="range"] { width:100%; }
+    button { background:#00ffff; color:#000; border:0; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer; }
+    button.secondary { background:#222; color:#fff; border:1px solid #333; }
+    small { opacity:.7 }
+    .footer { margin-top:12px; display:flex; justify-content:space-between; align-items:center; font-size:12px; }
+    source-group, .controller-group {
         border: 1px solid #ccc;
         padding: 15px;
         margin-top: 15px;
@@ -29,17 +42,17 @@
       label {
         margin-right: 10px;
       }
-      button, select, input {
+      select, input {
         font-size: 1em;
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>BitCrusher (AudioWorklet)</h1>
+    <div class="card">
+      <h1>BitCrusher AudioWorklet with Tone Select, Record, File Select</h1>
       <p>
-        Click "Start Audio" first. Then, select an audio source to pipe
-        through the BitCrusher.
+        Click <b>Start Audio</b> first. Then, select an audio source to pipe
+        through the BitCrusher. Move the sliders to hear real-time DSP in your browser.
       </p>
 
       <button id="button-start-context" type="button">Start Audio</button>
