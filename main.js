@@ -92,7 +92,7 @@ async function setupAudio() {
   // bitCrusherNode.connect(context.destination);
 
   // --- Setup Effect Sliders ---
-  const bitDepthParam = bitCrusherNode.parameters.get('bitDepth');
+  const bitDepthParam = bitCrusherNode.parameters.get('bits');
   const frequencyReductionParam =
       bitCrusherNode.parameters.get('frequencyReduction');
 
