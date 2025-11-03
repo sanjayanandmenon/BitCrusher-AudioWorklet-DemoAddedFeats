@@ -77,7 +77,16 @@ async function setupAudio() {
   await context.audioWorklet.addModule('bitcrusher-processor.js');
   
   // Create the node
-  bitCrusherNode = new AudioWorkletNode(context, 'bitcrusher-processor');
+  bitCrusherNode = new AudioWorkletNode(context, 'bitcrusher-processor', {
+      numberOfInputs: 1,
+      numberOfOutputs: 1,
+      outputChannelCount: [2]
+    });
+
+    master = context.createGain();
+    master.gain.value = 0.2;
+    workletNode.connect(master).connect(context.destination);
+  });
   
   // Connect the effect node to the destination (output)
   bitCrusherNode.connect(context.destination);
