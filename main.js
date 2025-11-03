@@ -1,7 +1,25 @@
 // main.js
 const FADE_TIME = 0.001;
 
-const context = new AudioContext();
+let ctx;
+
+/*async function ensureCtx() {
+    if (!ctx) {
+         ctx = new (window.AudioContext || window.webkitAudioContext)();
+         await ctx.audioWorklet.addModule('./bitcrusher-processor.js');
+
+         bitCrusherNode = new AudioWorkletNode(ctx, 'bitcrusher-processor', {
+            numberOfInputs: 1,
+            numberOfOutputs: 1,
+            outputChannelCount: [2]
+    });
+
+    master = ctx.createGain();
+    master.gain.value = 0.2;
+    workletNode.connect(master).connect(ctx.destination);
+  }
+}*/
+
 
 // --- UI Elements ---
 const startContextButton = document.getElementById('button-start-context');
