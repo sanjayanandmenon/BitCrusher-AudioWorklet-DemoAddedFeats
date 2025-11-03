@@ -85,11 +85,11 @@ async function setupAudio() {
 
     master = context.createGain();
     master.gain.value = 0.2;
-    workletNode.connect(master).connect(context.destination);
+    bitCrusherNode.connect(master).connect(context.destination);
   });
   
   // Connect the effect node to the destination (output)
-  bitCrusherNode.connect(context.destination);
+  // bitCrusherNode.connect(context.destination);
 
   // --- Setup Effect Sliders ---
   const bitDepthParam = bitCrusherNode.parameters.get('bitDepth');
