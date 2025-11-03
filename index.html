@@ -1,49 +1,92 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BitCrusher Demo</title>
-  <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#0d0d0d; color:#fff; display:flex; min-height:100vh; align-items:center; justify-content:center; margin:0; }
-    .card { background:#161616; padding:24px; border-radius:16px; width:min(640px, 92vw); box-shadow:0 10px 30px rgba(0,0,0,.4); }
-    h1 { margin:0 0 8px; font-size:22px; color:#00ffff; }
-    p { margin:0 0 16px; opacity:.85 }
-    .row { display:flex; gap:12px; align-items:center; margin:10px 0; }
-    input[type="range"] { width:100%; }
-    button { background:#00ffff; color:#000; border:0; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer; }
-    button.secondary { background:#222; color:#fff; border:1px solid #333; }
-    small { opacity:.7 }
-    .footer { margin-top:12px; display:flex; justify-content:space-between; align-items:center; font-size:12px; }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h1>BitCrusher – AudioWorklet</h1>
-    <p>Click <b>Start</b> and move the sliders to hear real-time DSP in your browser.</p>
+  <head>
+    <meta charset="utf-8">
+    <title>BitCrusher with AudioWorklet</title>
+    <link rel="stylesheet" href="main.css">
+    <style>
+      /* Added styles for the new layout */
+      .source-group, .controller-group {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 8px;
+        background: #f9f9f9;
+      }
+      .source-group h3 {
+        margin-top: 0;
+      }
+      .source-item {
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed #ddd;
+      }
+      .source-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+      label {
+        margin-right: 10px;
+      }
+      button, select, input {
+        font-size: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>BitCrusher (AudioWorklet)</h1>
+      <p>
+        Click "Start Audio" first. Then, select an audio source to pipe
+        through the BitCrusher.
+      </p>
 
-    <div class="row">
-      <button id="start">Start</button>
-      <button id="stop" class="secondary">Stop</button>
-      <small>(Browsers require a user gesture to start audio)</small>
+      <button id="button-start-context" type="button">Start Audio</button>
+
+      <div class="source-group">
+        <h2>Audio Sources</h2>
+
+        <div class="source-item">
+          <h3>1. Tone Generator</h3>
+          <label for="wave-type">Waveform:</label>
+          <select id="wave-type">
+            <option value="sine">Sine</option>
+            <option value="square">Square</option>
+            <option value="triangle">Triangle</option>
+            <option value="sawtooth" selected>Sawtooth</option>
+          </select>
+          <button id="button-start-tone" type="button" disabled>Start Tone</button>
+        </div>
+
+        <div class="source-item">
+          <h3>2. Microphone Input</h3>
+          <button id="button-start-mic" type="button" disabled>Start Mic</button>
+        </div>
+
+        <div class="source-item">
+          <h3>3. Audio File</h3>
+          <input type="file" id="input-audio-file" accept="audio/*">
+          <button id="button-start-file" type="button" disabled>Play File</button>
+        </div>
+      </div>
+
+      <div class="controller-group">
+        <h2>Effect Controls</h2>
+        <div class="controller-item">
+          <label for="bit-depth">Bit Depth</label>
+          <input id="bit-depth" type="range"
+              min="1" max="16" step="1" value="12">
+          <span id="bit-depth-display">12</span>
+        </div>
+        <div class="controller-item">
+          <label for="frequency-reduction">Frequency Reduction</label>
+          <input id="frequency-reduction" type="range"
+              min="0" max="1" step="0.01" value="0.5">
+          <span id="frequency-reduction-display">0.5</span>
+        </div>
+      </div>
     </div>
-
-    <div class="row">
-      <label for="bits" style="min-width:140px;">Bit Depth: <span id="bitsVal">8</span></label>
-      <input id="bits" type="range" min="2" max="16" value="8" />
-    </div>
-
-    <div class="row">
-      <label for="freq" style="min-width:140px;">Freq Reduce: <span id="freqVal">8</span></label>
-      <input id="freq" type="range" min="1" max="64" value="8" />
-    </div>
-
-    <div class="footer">
-      <small>Signal: Source → <i>BitCrusherProcessor</i> → Destination</small>
-      <small>Control: UI → <i>AudioParams</i> → DSP</small>
-    </div>
-  </div>
-
-  <script type="module" src="./main.js"></script>
-</body>
+    <script src="main.js"></script>
+  </body>
 </html>
