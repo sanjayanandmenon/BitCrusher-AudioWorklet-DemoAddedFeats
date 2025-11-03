@@ -1,0 +1,39 @@
+body {
+  font-family: sans-serif;
+  padding: 1em;
+  line-height: 1.5;
+  background: #fdfdfd;
+  color: #333;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* This is the key style from the original repo */
+.controller-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1em;
+}
+
+.controller-item label {
+  flex: 0 0 160px; /* Give the label a fixed width */
+}
+
+.controller-item input[type="range"] {
+  flex: 1 1 auto; /* Let the slider fill the remaining space */
+  margin: 0 1em;
+}
+
+.controller-item span {
+  flex: 0 0 40px; /* Give the number display a fixed width */
+  text-align: right;
+  font-family: monospace;
+}
+
+button, select, input {
+  font-size: 1em;
+  margin: 5px 0;
+}
