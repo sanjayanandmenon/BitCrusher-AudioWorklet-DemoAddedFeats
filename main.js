@@ -1,7 +1,7 @@
 // main.js
 const FADE_TIME = 0.001;
 
-let ctx;
+let ctx, osc, master;
 
 /*async function ensureCtx() {
     if (!ctx) {
@@ -114,6 +114,22 @@ async function setupAudio() {
   const frequencyReductionParam =
       bitCrusherNode.parameters.get('frequencyReduction');
 
+  function updateBits() {
+      const v = Math.round(+bitDepthSlider.value);
+      bitDepthSlider.textContent = v;
+      if (bitCrusherNode) {
+        bitCrusherNode.parameters.get('bits').value = v;
+      }
+  }
+  function updateFreq() {
+  const v = Math.round(+freqEl.value);
+  freqVal.textContent = v;
+  if (workletNode) {
+    workletNode.parameters.get('frequencyReduction').value = v;
+  }
+}
+
+
   bitDepthSlider.oninput = (event) => {
     const value = parseFloat(event.target.value);
     bitDepthParam.setTargetAtTime(value, context.currentTime, FADE_TIME);
@@ -125,6 +141,9 @@ async function setupAudio() {
         value, context.currentTime, FADE_TIME);
     frequencyReductionDisplay.textContent = value;
   };
+  
+  bitDepthSlider.addEventListener('input', updateBits);
+  frequencyReductionSlider.addEventListener('input', updateFreq);
 
   // --- Setup Audio Source Buttons ---
 
