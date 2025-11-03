@@ -1,91 +1,198 @@
-const startBtn = document.getElementById('start');
-const stopBtn  = document.getElementById('stop');
-const bitsEl   = document.getElementById('bits');
-const freqEl   = document.getElementById('freq');
-const bitsVal  = document.getElementById('bitsVal');
-const freqVal  = document.getElementById('freqVal');
+// main.js
+const FADE_TIME = 0.001;
 
-let ctx, workletNode, osc, master;
+const context = new AudioContext();
 
-// ----------------------
-// 오디오 컨텍스트 초기화
-// ----------------------
-async function ensureCtx() {
-  if (!ctx) {
-    ctx = new (window.AudioContext || window.webkitAudioContext)();
-    await ctx.audioWorklet.addModule('./bitcrusher-processor.js');
+// --- UI Elements ---
+const startContextButton = document.getElementById('button-start-context');
 
-    workletNode = new AudioWorkletNode(ctx, 'bitcrusher-processor', {
-      numberOfInputs: 1,
-      numberOfOutputs: 1,
-      outputChannelCount: [2]
-    });
+// Tone controls
+const waveTypeSelect = document.getElementById('wave-type');
+const startToneButton = document.getElementById('button-start-tone');
 
-    master = ctx.createGain();
-    master.gain.value = 0.2;
-    workletNode.connect(master).connect(ctx.destination);
+// Mic controls
+const startMicButton = document.getElementById('button-start-mic');
+
+// File controls
+const audioFileInput = document.getElementById('input-audio-file');
+const startFileButton = document.getElementById('button-start-file');
+
+// Effect controls
+const bitDepthSlider = document.getElementById('bit-depth');
+const bitDepthDisplay = document.getElementById('bit-depth-display');
+const frequencyReductionSlider =
+    document.getElementById('frequency-reduction');
+const frequencyReductionDisplay =
+    document.getElementById('frequency-reduction-display');
+
+// --- Global Audio Nodes & State ---
+let bitCrusherNode;
+let oscillatorNode = null;
+let micStreamSource = null;
+let fileBufferSource = null;
+let micStream = null; // To keep track of the stream for stopping tracks
+
+/**
+ * Stop all other audio sources to ensure only one plays at a time.
+ */
+function stopAllSources() {
+  // Stop Tone
+  if (oscillatorNode) {
+    oscillatorNode.stop(context.currentTime + FADE_TIME);
+    oscillatorNode.disconnect();
+    oscillatorNode = null;
+    startToneButton.textContent = 'Start Tone';
+  }
+
+  // Stop Mic
+  if (micStreamSource) {
+    micStreamSource.disconnect();
+    // Stop the media stream tracks
+    micStream.getTracks().forEach(track => track.stop());
+    micStreamSource = null;
+    micStream = null;
+    startMicButton.textContent = 'Start Mic';
+  }
+
+  // Stop File
+  if (fileBufferSource) {
+    fileBufferSource.stop(context.currentTime + FADE_TIME);
+    fileBufferSource.disconnect();
+    fileBufferSource = null;
+    startFileButton.textContent = 'Play File';
   }
 }
 
-// ----------------------
-// 소스 생성 (오실레이터)
-// ----------------------
-function createSource() {
-  osc = ctx.createOscillator();
-  osc.type = 'sawtooth'; // 톱니파 (bit depth 변화 잘 들림)
-  osc.frequency.value = 500;
-  osc.connect(workletNode);
-  osc.start();
+/**
+ * Main setup function.
+ * Called once the "Start Audio" button is clicked.
+ */
+async function setupAudio() {
+  // Resume context if suspended
+  if (context.state === 'suspended') {
+    await context.resume();
+  }
+
+  // Load the bitcrusher processor
+  await context.audioWorklet.addModule('bitcrusher-processor.js');
+  
+  // Create the node
+  bitCrusherNode = new AudioWorkletNode(context, 'bitcrusher-processor');
+  
+  // Connect the effect node to the destination (output)
+  bitCrusherNode.connect(context.destination);
+
+  // --- Setup Effect Sliders ---
+  const bitDepthParam = bitCrusherNode.parameters.get('bitDepth');
+  const frequencyReductionParam =
+      bitCrusherNode.parameters.get('frequencyReduction');
+
+  bitDepthSlider.oninput = (event) => {
+    const value = parseFloat(event.target.value);
+    bitDepthParam.setTargetAtTime(value, context.currentTime, FADE_TIME);
+    bitDepthDisplay.textContent = value;
+  };
+  frequencyReductionSlider.oninput = (event) => {
+    const value = parseFloat(event.target.value);
+    frequencyReductionParam.setTargetAtTime(
+        value, context.currentTime, FADE_TIME);
+    frequencyReductionDisplay.textContent = value;
+  };
+
+  // --- Setup Audio Source Buttons ---
+
+  // 1. Tone Generator
+  startToneButton.onclick = () => {
+    if (oscillatorNode) {
+      // It's playing, so stop it
+      stopAllSources();
+    } else {
+      // It's stopped, so start it
+      stopAllSources(); // Stop others first
+      oscillatorNode = new OscillatorNode(context, {
+        type: waveTypeSelect.value,
+        frequency: 220,
+      });
+      oscillatorNode.connect(bitCrusherNode);
+      oscillatorNode.start(context.currentTime);
+      startToneButton.textContent = 'Stop Tone';
+    }
+  };
+  // Update oscillator type if changed while playing
+  waveTypeSelect.onchange = () => {
+    if (oscillatorNode) {
+      oscillatorNode.type = waveTypeSelect.value;
+    }
+  };
+
+  // 2. Microphone
+  startMicButton.onclick = async () => {
+    if (micStreamSource) {
+      // It's playing, so stop it
+      stopAllSources();
+    } else {
+      // It's stopped, so start it
+      try {
+        stopAllSources(); // Stop others first
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        micStreamSource = context.createMediaStreamSource(micStream);
+        micStreamSource.connect(bitCrusherNode);
+        startMicButton.textContent = 'Stop Mic';
+      } catch (err) {
+        console.error('Error accessing microphone:', err);
+        alert('Could not access microphone. ' + err.message);
+      }
+    }
+  };
+
+  // 3. Audio File
+  startFileButton.onclick = () => {
+    if (fileBufferSource) {
+      // It's playing, so stop it
+      stopAllSources();
+    } else {
+      // It's stopped, so start it
+      const file = audioFileInput.files[0];
+      if (!file) {
+        alert('Please select an audio file first.');
+        return;
+      }
+      stopAllSources(); // Stop others first
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const audioBuffer = await context.decodeAudioData(e.target.result);
+          fileBufferSource = context.createBufferSource();
+          fileBufferSource.buffer = audioBuffer;
+          fileBufferSource.loop = true; // Loop the file as requested
+          fileBufferSource.connect(bitCrusherNode);
+          fileBufferSource.start(context.currentTime);
+
+          // Handle when it stops (e.g., if loop is false)
+          fileBufferSource.onended = () => {
+            if (fileBufferSource) { // Check if it wasn't stopped manually
+              stopAllSources();
+            }
+          };
+
+          startFileButton.textContent = 'Stop File';
+        } catch (err) {
+          console.error('Error decoding audio file:', err);
+          alert('Could not decode audio file. ' + err.message);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  };
+
+  // Enable all buttons
+  startToneButton.disabled = false;
+  startMicButton.disabled = false;
+  startFileButton.disabled = false;
+  startContextButton.disabled = true;
+  startContextButton.textContent = 'Audio Started';
 }
 
-// ----------------------
-// 파라미터 업데이트
-// ----------------------
-function updateBits() {
-  const v = Math.round(+bitsEl.value);
-  bitsVal.textContent = v;
-  if (workletNode) {
-    workletNode.parameters.get('bits').value = v;
-  }
-}
-
-function updateFreq() {
-  const v = Math.round(+freqEl.value);
-  freqVal.textContent = v;
-  if (workletNode) {
-    workletNode.parameters.get('frequencyReduction').value = v;
-  }
-}
-
-// ----------------------
-// 버튼 이벤트
-// ----------------------
-startBtn.addEventListener('click', async () => {
-  await ensureCtx();
-  if (ctx.state !== 'running') await ctx.resume();
-
-  if (!osc) createSource();
-
-  // 초기 파라미터 적용
-  updateBits();
-  updateFreq();
-});
-
-stopBtn.addEventListener('click', async () => {
-  if (!ctx) return;
-  if (osc) {
-    try { osc.stop(); } catch(_) {}
-    try { osc.disconnect(); } catch(_) {}
-    osc = null;
-  }
-});
-
-// ----------------------
-// 슬라이더 이벤트
-// ----------------------
-bitsEl.addEventListener('input', updateBits);
-freqEl.addEventListener('input', updateFreq);
-
-// 초기 표시
-bitsVal.textContent = bitsEl.value;
-freqVal.textContent = freqEl.value;
+// Main event listener to start the audio context
+startContextButton.onclick = setupAudio;
