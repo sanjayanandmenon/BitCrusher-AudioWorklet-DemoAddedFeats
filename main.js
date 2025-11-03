@@ -85,6 +85,20 @@ function stopAllSources() {
  * Main setup function.
  * Called once the "Start Audio" button is clicked.
  */
+function updateBits() {
+      const v = Math.round(+bitDepthSlider.value);
+      bitDepthSlider.textContent = v;
+      if (bitCrusherNode) {
+        bitCrusherNode.parameters.get('bits').value = v;
+      }
+  }
+  function updateFreq() {
+  const v = Math.round(+freqEl.value);
+  freqVal.textContent = v;
+  if (workletNode) {
+    workletNode.parameters.get('frequencyReduction').value = v;
+  }
+}
 async function setupAudio() {
   // Resume context if suspended
   if (context.state === 'suspended') {
@@ -113,21 +127,6 @@ async function setupAudio() {
   const bitDepthParam = bitCrusherNode.parameters.get('bits');
   const frequencyReductionParam =
       bitCrusherNode.parameters.get('frequencyReduction');
-
-  function updateBits() {
-      const v = Math.round(+bitDepthSlider.value);
-      bitDepthSlider.textContent = v;
-      if (bitCrusherNode) {
-        bitCrusherNode.parameters.get('bits').value = v;
-      }
-  }
-  function updateFreq() {
-  const v = Math.round(+freqEl.value);
-  freqVal.textContent = v;
-  if (workletNode) {
-    workletNode.parameters.get('frequencyReduction').value = v;
-  }
-}
 
 
   bitDepthSlider.oninput = (event) => {
